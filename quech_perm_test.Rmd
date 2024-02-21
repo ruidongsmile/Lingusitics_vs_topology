@@ -1,0 +1,84 @@
+---
+title: "Untitled"
+output: html_document
+date: "2024-02-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(glottospace)
+library(mice)
+library(ca)
+library(fastDummies)
+library(TDAstats)
+library(TDA)
+library(rgl)
+library(ggplot2)
+library(ggpubr)
+library(ggforce)
+library(ggrepel)
+library(readxl)
+```
+
+```{r}
+load("gb_data.Rdata")
+load("gb_dummy.Rdata")
+```
+
+```{r}
+source("data_points.R")
+```
+
+```{r}
+gb_mjca <- mjca(gb_data[, colnames(gb_data)[-c(1:2)]], lambda="adjusted") # "Burt", "adjusted", "indicator"
+rownames(gb_mjca$colpcoord) <- gb_mjca$levelnames
+```
+
+```{r}
+quech_1 <- which(gb_data$glottocode %in% c("cald1236", "chim1302", "imba1240")) |>
+  lapply(
+    FUN = function(idx){
+       my_points(idx, dim=c(1:4))
+    }
+  ) |>
+  lapply(
+    FUN = function(x){
+      calculate_homology(x)
+    }
+  )
+```
+
+```{r}
+quech_2 <- which(gb_data$glottocode %in% c("ayac1239", "cusc1236", "nort2980", "sanm1289", "hual1241")) |>
+  lapply(
+    FUN = function(idx){
+       my_points(idx, dim=c(1:4))
+    }
+  ) |>
+  lapply(
+    FUN = function(x){
+      calculate_homology(x)
+    }
+  )
+```
+
+
+```{r}
+# The total permutation test of Quechuan
+my_perm_test(quech_1, quech_2)
+```
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,95 @@
+---
+title: "je_perm_test"
+output: html_document
+date: "2024-02-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(glottospace)
+library(mice)
+library(ca)
+library(fastDummies)
+library(TDAstats)
+library(TDA)
+library(rgl)
+library(ggplot2)
+library(ggpubr)
+library(ggforce)
+library(ggrepel)
+library(readxl)
+```
+
+```{r}
+load("gb_data.Rdata")
+load("gb_dummy.Rdata")
+source("data_points.R")
+```
+
+```{r}
+gb_mjca <- mjca(gb_data[, colnames(gb_data)[-c(1:2)]], lambda="adjusted") # "Burt", "adjusted", "indicator"
+rownames(gb_mjca$colpcoord) <- gb_mjca$levelnames
+```
+
+```{r}
+glottocode_Je <- gb_data[gb_data$family_name == "Nuclear-Macro-Je", "glottocode"]
+glottodata_Je <- glottofilter(glottocode = glottocode_Je)
+je_idx <- c("Je", "Je", "Not Je", "Not Je", "Not Je",
+            "Not Je", "Not Je", "Je", "Not Je", "Je",
+            "Je")
+glottodata_Je$is_Je <- je_idx
+```
+
+```{r}
+je_1 <- which(gb_data$family_name == "Nuclear-Macro-Je")[je_idx == "Je"] |>
+  lapply(
+    FUN = function(idx){
+       my_points(idx, dim=c(1:4))
+    }
+  ) |>
+  lapply(
+    FUN = function(x){
+      calculate_homology(x)
+    }
+  )
+```
+
+```{r}
+je_2 <- which(gb_data$family_name == "Nuclear-Macro-Je")[je_idx != "Je"] |>
+  lapply(
+    FUN = function(idx){
+       my_points(idx, dim=c(1:4))
+    }
+  )  |>
+  lapply(
+    FUN = function(x){
+      calculate_homology(x)
+    }
+  )
+```
+
+```{r}
+my_perm_test(je_1, je_2)
+```
+
+```{r}
+my_perm_test(je_1, je_2, power_p = Inf)
+```
+
+```{r}
+TDApplied::permutation_test(je_1, je_2, iterations = 100, dims = 1, p = 2, q = 1) # The p-value of permutation test is not unique
+```
+
+```{r}
+TDApplied::permutation_test(je_1, je_2, iterations = 100, dims = 1, p = Inf, q = 1) # The p-value of permutation test is not unique
+```
+
+
+
+
+
+
+

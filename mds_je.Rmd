@@ -1,0 +1,153 @@
+---
+title: "Untitled"
+output: html_document
+date: "2024-02-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(glottospace)
+library(mice)
+library(ca)
+library(fastDummies)
+library(TDAstats)
+library(TDA)
+library(rgl)
+library(ggplot2)
+library(ggpubr)
+library(ggforce)
+library(ggrepel)
+library(readxl)
+```
+
+```{r}
+load("gb_data.Rdata")
+load("gb_dummy.Rdata")
+source("data_points.R")
+```
+
+```{r}
+gb_mjca <- mjca(gb_data[, colnames(gb_data)[-c(1:2)]], lambda="adjusted") # "Burt", "adjusted", "indicator"
+rownames(gb_mjca$colpcoord) <- gb_mjca$levelnames
+```
+
+```{r}
+glottocode_Je <- gb_data[gb_data$family_name == "Nuclear-Macro-Je", "glottocode"]
+glottodata_Je <- glottofilter(glottocode = glottocode_Je)
+je_idx <- c("Je", "Je", "Not Je", "Not Je", "Not Je",
+            "Not Je", "Not Je", "Je", "Not Je", "Je",
+            "Je")
+glottodata_Je$is_Je <- je_idx
+```
+
+```{r, fig.width=10, fig.height=10}
+je_pd_lst <- which(gb_data$family_name == "Nuclear-Macro-Je") |>
+  lapply(FUN = function(idx){
+    my_persist_plot(idx, coord_dim=c(1:4), title_hjust=.7, title_vjust=0.9, title_size = 16)
+    })
+```
+
+```{r, fig.width=10, fig.height=10}
+pd_is_je <- ggarrange(plotlist = je_pd_lst[which(je_idx == "Je")],
+          ncol = 3,
+          nrow = 2
+          )
+pd_is_je
+```
+
+```{r, fig.width=10, fig.height=10}
+pd_not_je <- ggarrange(plotlist = je_pd_lst[which(je_idx != "Je")],
+          ncol = 3,
+          nrow = 2,
+          # labels = je_idx[1:9],
+         #  vjust =6.9,
+         #  hjust = -3,
+          font.label = list(size = 6,
+          common.legend=T)
+          )
+pd_not_je
+```
+
+```{r}
+png(filename = "img/pd_is_je.png",
+    width = 960, height = 960)
+print(pd_is_je)
+dev.off()
+```
+
+```{r}
+png(filename = "img/pd_not_je.png",
+    width = 960, height = 960)
+print(pd_not_je)
+dev.off()
+```
+
+```{r, fig.height=5, fig.width=5}
+je_dist <- wasserstein_dist(which(gb_data$family_name == "Nuclear-Macro-Je"), 
+                              coord_dim = 1:4, p=Inf, dimension = 1)
+
+je_mds <- cmdscale(je_dist)
+
+je_mds_df <- as.data.frame(je_mds)
+
+je_mds_df[, "glottocode"] <- gb_data$glottocode[which(gb_data$family_name == "Nuclear-Macro-Je")]
+# mds_df[, "Language_Name"] <- gb_data$[olga_idx]
+je_mds_df[, "Family"] <- je_idx
+
+je_wass_Inf <- ggscatter(je_mds_df, x = "V1", y = "V2",
+          label = "glottocode",
+          color = "Family",
+          size = 1.5,
+          repel = TRUE) +
+  ggtitle("") +
+  theme(plot.title = element_text(hjust = 0.5, vjust = 0))
+je_wass_Inf
+```
+
+```{r, fig.height=5, fig.width=5}
+je_dist <- wasserstein_dist(which(gb_data$family_name == "Nuclear-Macro-Je"), 
+                              coord_dim = 1:4, p=2, dimension = 1)
+
+je_mds <- cmdscale(je_dist)
+
+je_mds_df <- as.data.frame(je_mds)
+
+je_mds_df[, "glottocode"] <- gb_data$glottocode[which(gb_data$family_name == "Nuclear-Macro-Je")]
+# mds_df[, "Language_Name"] <- gb_data$[olga_idx]
+je_mds_df[, "Family"] <- je_idx
+
+je_wass_2 <- ggscatter(je_mds_df, x = "V1", y = "V2",
+          label = "glottocode",
+          color = "Family",
+          size = 1.5,
+          repel = TRUE) +
+  ggtitle("") +
+  theme(plot.title = element_text(hjust = 0.5, vjust = 0))
+je_wass_2
+```
+
+```{r}
+png(filename = "img/je_wass_Inf.png",
+    width = 480, height = 480)
+print(je_wass_Inf)
+dev.off()
+```
+
+```{r}
+png(filename = "img/je_wass_2.png",
+    width = 480, height = 480)
+print(je_wass_2)
+dev.off()
+```
+
+
+
+
+
+
+
+
+

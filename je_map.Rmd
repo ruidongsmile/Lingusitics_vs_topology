@@ -1,0 +1,71 @@
+---
+title: "Untitled"
+output: html_document
+date: "2024-02-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(glottospace)
+library(mice)
+library(ca)
+library(fastDummies)
+library(TDAstats)
+library(TDA)
+library(rgl)
+library(ggplot2)
+library(ggpubr)
+library(ggforce)
+library(ggrepel)
+library(readxl)
+```
+
+```{r}
+load("gb_data.Rdata")
+load("gb_dummy.Rdata")
+```
+
+```{r}
+source("data_points.R")
+```
+
+
+
+
+```{r}
+glottocode_Je <- gb_data[gb_data$family_name == "Nuclear-Macro-Je", "glottocode"]
+glottodata_Je <- glottofilter(glottocode = glottocode_Je)
+je_idx <- c("Je", "Je", "Not Je", "Not Je", "Not Je",
+            "Not Je", "Not Je", "Je", "Not Je", "Je",
+            "Je")
+glottodata_Je$is_Je <- je_idx
+```
+
+```{r, fig.height=10, fig.width=10}
+je_map <- glottodata_Je |>
+  glottomap(type = "static", label="glottocode", lbsize = .95, ptsize = .7, color="is_Je", alpha = .9,
+            glotto_title = "Nuclear Je or not") +
+  tmap::tm_layout(legend.position = c("left", "top"))
+
+je_map
+```
+
+```{r}
+png(filename = "img/je_map.png",
+    width = 960, height = 960)
+print(je_map)
+dev.off()
+```
+
+
+
+
+
+
+
+
+
+

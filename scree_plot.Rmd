@@ -1,0 +1,75 @@
+---
+title: "Untitled"
+output: html_document
+date: "2024-02-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(glottospace)
+library(mice)
+library(ca)
+library(fastDummies)
+library(TDAstats)
+library(TDA)
+library(rgl)
+library(ggplot2)
+library(ggpubr)
+library(ggforce)
+library(ggrepel)
+library(readxl)
+```
+
+```{r}
+load("gb_data.Rdata")
+load("gb_dummy.Rdata")
+```
+
+```{r}
+gb_mjca <- mjca(gb_data[, colnames(gb_data)[-c(1:2)]], lambda="adjusted") # "Burt", "adjusted", "indicator"
+rownames(gb_mjca$colpcoord) <- gb_mjca$levelnames
+```
+
+```{r}
+vars <- gb_mjca$inertia.e
+```
+
+```{r}
+scree_plot <- qplot(c(1:10), vars[1:10]) +
+  geom_line() +
+  theme_bw() +
+  xlab("Principal Component") + 
+  ylab("Variance Explained") +
+  # ggtitle("Scree Plot") +
+  ylim(0, .75) +
+  theme(aspect.ratio=1,
+        legend.position = "none") 
+
+scree_plot
+```
+
+```{r}
+png(filename = "img/scree_plot.png")
+print(scree_plot)
+dev.off()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

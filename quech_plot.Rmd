@@ -1,0 +1,146 @@
+---
+title: "Untitled"
+output: html_document
+date: "2024-02-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(glottospace)
+library(mice)
+library(ca)
+library(fastDummies)
+library(TDAstats)
+library(TDA)
+library(rgl)
+library(ggplot2)
+library(ggpubr)
+library(ggforce)
+library(ggrepel)
+library(readxl)
+```
+
+```{r}
+load("gb_data.Rdata")
+load("gb_dummy.Rdata")
+```
+
+```{r}
+source("data_points.R")
+```
+
+```{r}
+quech_idx <- c("South Quechuan", "North Quechuan", "North Quechuan", "South Quechuan",
+               "South Quechuan", "North Quechuan", "South Quechuan", "South Quechuan")
+
+glottodata_quech <- glottofilter(glottocode = gb_data$glottocode[gb_data$family_name == "Quechuan"])
+glottodata_quech$n_s <- quech_idx
+```
+
+```{r, fig.height=10, fig.width=10}
+quech_map <- glottodata_quech |>
+  glottomap(type = "static", label="glottocode", lbsize = .95, ptsize = .7, color="n_s", alpha = .9,
+            glotto_title = "Quechuan Languages") +
+  tmap::tm_layout(legend.position = c("right", "top"))
+
+quech_map
+```
+
+```{r}
+png(filename = "img/quech_map.png",
+    width = 960, height = 960)
+print(quech_map)
+dev.off()
+```
+
+```{r}
+gb_mjca <- mjca(gb_data[, colnames(gb_data)[-c(1:2)]], lambda="adjusted") # "Burt", "adjusted", "indicator"
+rownames(gb_mjca$colpcoord) <- gb_mjca$levelnames
+```
+
+```{r, fig.width=10, fig.height=10}
+quech_pd_lst <- which(gb_data$family_name == "Quechuan") |>
+  lapply(FUN = function(idx){
+    my_persist_plot(idx, coord_dim=c(1:4), title_hjust=.7, title_vjust=0.9, title_size = 16)
+    })
+```
+
+```{r, fig.width=10, fig.height=10}
+quech_pd_north <- ggarrange(plotlist = quech_pd_lst[c(2, 3, 6)],
+          ncol = 3,
+          nrow = 1
+          )
+quech_pd_north
+```
+
+```{r, fig.width=10, fig.height=10}
+quech_pd_south <- ggarrange(plotlist = quech_pd_lst[c(1, 4, 5, 7, 8)],
+          ncol = 3,
+          nrow = 2
+          )
+quech_pd_south
+```
+
+```{r}
+png(filename = "img/quech_pd_north.png",
+    width = 960, height = 960)
+print(quech_pd_north)
+dev.off()
+```
+
+```{r}
+png(filename = "img/quech_pd_south.png",
+    width = 960, height = 960)
+print(quech_pd_south)
+dev.off()
+```
+
+```{r}
+quech_dist <- wasserstein_dist(which(gb_data$family_name == "Quechuan"), coord_dim = 1:4, p=2, dimension=1)
+```
+
+```{r}
+wass_mds <- cmdscale(quech_dist, k=3)
+```
+
+```{r}
+colors <- c("blue", "red", "red", "blue", "blue", "red", "blue", "blue") 
+plot3d( 
+  x=wass_mds[, 1], y=wass_mds[, 2], z=wass_mds[, 3], 
+  col = colors, 
+  type = 's', 
+  radius = .0002,
+  xlab="V1", ylab="V2", zlab="V3")
+text3d(x=wass_mds[, 1], y=wass_mds[, 2], z=wass_mds[, 3],
+       rownames(wass_mds), cex=.9)
+```
+
+
+```{r}
+rgl.postscript("img/quech_3d.eps", fmt="eps")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

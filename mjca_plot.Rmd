@@ -1,0 +1,82 @@
+---
+title: "Untitled"
+output: html_document
+date: "2024-02-21"
+---
+
+```{r}
+library(glottospace)
+library(mice)
+library(ca)
+library(fastDummies)
+library(TDAstats)
+library(TDA)
+library(rgl)
+library(ggplot2)
+library(ggpubr)
+library(ggforce)
+library(ggrepel)
+library(readxl)
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# source("data_preprocessing.R")
+load("gb_data.Rdata")
+load("gb_dummy.Rdata")
+```
+
+```{r}
+gb_mjca <- mjca(gb_data[, colnames(gb_data)[-c(1:2)]], lambda="adjusted") # "Burt", "adjusted", "indicator"
+rownames(gb_mjca$colpcoord) <- gb_mjca$levelnames
+
+gb_pts <- as.data.frame(gb_mjca$colpcoord[, 1:2])
+colnames(gb_pts) <- c("X", "Y")
+gb_pts$labels <- gb_mjca$levelnames
+x_lab <-paste0("Dimension 1 ", "(", round(gb_mjca$inertia.e[1] * 100, 1), "%)")
+y_lab <-paste0("Dimension 2 ", "(", round(gb_mjca$inertia.e[2] * 100, 1), "%)")
+```
+
+# ```{r, fig.height=5, fig.width=5}
+```{r, fig.height=5, fig.width=5}
+mjca_ggplot <- ggplot(gb_pts, aes(X, Y, label=labels, color = "red")) +
+  theme_bw() +
+  geom_point(size=1.8) +
+  labs(
+    x = x_lab,
+    y = y_lab
+  ) +
+  geom_text(hjust=.45, vjust=-0.7, color = "black",
+            size=3) +
+  xlim(-0.45, 0.3) +
+  ylim(-0.45, 0.3) +
+  theme(aspect.ratio=1,
+        legend.position = "none")
+
+mjca_ggplot
+```
+
+```{r}
+png(filename = "img/mjca_ggplot.png")
+print(mjca_ggplot)
+dev.off()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,109 @@
+---
+title: "Untitled"
+output: html_document
+date: "2024-02-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(glottospace)
+library(mice)
+library(ca)
+library(fastDummies)
+library(TDAstats)
+library(TDA)
+library(rgl)
+library(ggplot2)
+library(ggpubr)
+library(ggforce)
+library(ggrepel)
+library(readxl)
+```
+
+```{r}
+load("gb_data.Rdata")
+load("gb_dummy.Rdata")
+```
+
+```{r}
+source("data_points.R")
+```
+
+```{r}
+gb_mjca <- mjca(gb_data[, colnames(gb_data)[-c(1:2)]], lambda="adjusted") # "Burt", "adjusted", "indicator"
+rownames(gb_mjca$colpcoord) <- gb_mjca$levelnames
+```
+
+```{r, fig.width=10, fig.height=10}
+langs_idx <- c(which(gb_data$family_name == "Quechuan")[1:3],
+               which(gb_data$family_name == "Nuclear-Macro-Je")[c(1, 2, 10)])
+
+langs_label <- c(rep("         Quechuan:", 3),
+                 rep("Nuclear-Macro-Je:", 3))
+
+tst_points_lst <- langs_idx |>
+  lapply(FUN = function(idx){
+    my_ggplot_mjca_adjust(idx, dim=c(1, 2), title_hjust = 1, title_vjust = 0.5,
+                          title_size = 16)})
+
+fam_clds <- ggarrange(plotlist = tst_points_lst,
+          ncol = 3,
+          nrow = 2,
+          labels = langs_label,
+          vjust =7.2,
+          hjust = -0.35,
+          font.label = list(size = 14,
+                            face = "italic",
+                            common.legend=T)
+          )
+
+fam_clds
+```
+
+```{r}
+png(filename = "img/family_clouds.png",
+    width = 960, height = 960)
+print(fam_clds)
+dev.off()
+```
+
+```{r, fig.width=10, fig.height=10}
+pd_list <- langs_idx |>
+  lapply(
+    FUN = function(idx){
+      my_persist_plot(idx, coord_dim=c(1:2), title_hjust=.7, title_vjust=0.9, title_size = 17)
+    }
+  )
+
+family_pd <- ggarrange(plotlist = pd_list,
+          ncol = 3,
+          nrow = 3,
+          labels = langs_label,
+          vjust = 6.9,
+          hjust = -0.35,
+          font.label = list(size = 10,
+                            face = "italic",
+                            common.legend=T)
+          )
+family_pd
+```
+
+```{r}
+png(filename = "img/family_pd.png",
+    width = 960, height = 960)
+print(family_pd)
+dev.off()
+```
+
+
+
+
+
+
+
+
+
+
