@@ -116,7 +116,19 @@ plot_fun(RipsFilt, 2.25)
 dev.off()
 ```
 
+```{r}
+pretzel_hom <- calculate_homology(pretzel)
+```
 
+```{r}
+pretzel_hom[pretzel_hom[, "dimension"] == 1, ]
+```
+
+```{r}
+png(file = "img/pretzel_dg.png")
+plot_persist(pretzel_hom[pretzel_hom[, "dimension"] == 1, ], )
+dev.off()
+```
 
 
 
