@@ -1,0 +1,84 @@
+---
+title: "Untitled"
+output: html_document
+date: "2024-03-08"
+---
+
+```{r}
+library(ggplot2)
+library(latex2exp)
+library(TDAstats)
+
+# Generate vertices of the simplex
+vertices <- data.frame(
+  x1 = c(1, 0, 0.5),
+  x2 = c(0, 0, sqrt(3)/2),
+  label = c("p0", "p1", "p2")  # Labels for the vertices
+)
+
+# Create the plot
+trig <- ggplot(vertices, aes(x = x1, y = x2)) +
+  geom_polygon(fill = rgb(153, 37, 190, maxColorValue = 255), color = "black") +
+  geom_point(size = 3) +
+  # geom_text(aes(label = label), vjust = -1.5, hjust = 0.5) + 
+  annotate(geom  = "text", 
+           x     = c(1, 0, 0.5), 
+           y     = c(0, 0, sqrt(3)/2), 
+           label = c(TeX("$p_0$"), TeX("$p_1$"), TeX("$p_2$")), 
+           hjust = 0.4,
+           vjust = -1.2,
+           size = 10) +
+  xlim(0, 1) +
+  ylim(0, 1) +
+  labs(x = "x1", y = "x2") +
+  theme_minimal() +
+  theme_void() +
+  coord_fixed()
+```
+
+```{r}
+png(file = "img/trig.png")
+trig
+dev.off()
+```
+
+```{r}
+# Create the plot
+trig_bd <- ggplot(vertices, aes(x = x1, y = x2)) +
+  geom_polygon(fill = "white", color = "black") +
+  geom_point(size = 3) +
+  # geom_text(aes(label = label), vjust = -1.5, hjust = 0.5) + 
+  annotate(geom  = "text", 
+           x     = c(1, 0, 0.5), 
+           y     = c(0, 0, sqrt(3)/2), 
+           label = c(TeX("$p_0$"), TeX("$p_1$"), TeX("$p_2$")), 
+           hjust = 0.4,
+           vjust = -1.2,
+           size = 10) +
+  xlim(0, 1) +
+  ylim(0, 1) +
+  labs(x = "x1", y = "x2") +
+  theme_minimal() +
+  theme_void() +
+  coord_fixed()
+```
+
+```{r}
+png(file = "img/trig_bd.png")
+trig_bd
+dev.off()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+

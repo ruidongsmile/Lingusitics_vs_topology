@@ -46,7 +46,7 @@ glottodata_Je$is_Je <- je_idx
 
 ```{r, fig.height=10, fig.width=10}
 je_map <- glottodata_Je |>
-  glottomap(type = "static", label="glottocode", lbsize = .95, ptsize = .7, color="is_Je", alpha = .9,
+  glottomap(type = "static", label="glottocode", lbsize = 1, ptsize = .7, color="is_Je", alpha = .9,
             glotto_title = "Nuclear Je or not") +
   tmap::tm_layout(legend.position = c("left", "top"))
 

@@ -66,7 +66,7 @@ plot_fun <- function(filt, r) {
                 xlab = "", ylab = "", asp = 1, axes = FALSE) 
       for(j in 1:length(data[, 1])) {
         draw.circle(x = data[j, 1], y = data[j, 2], radius = r / 2,
-        col = rgb(0.05, 0.05, 0.9, 0.045))
+        col = rgb(144/255, 238/255, 144/255, 0.035))
       }
       for (idx in seq(along = filt[["cmplx"]][filt$values < r])) {
         polygon(data[filt[["cmplx"]][[idx]], 1], data[filt[["cmplx"]][[idx]], 2],
@@ -94,13 +94,13 @@ dev.off()
 
 ```{r}
 png(file = "img/pretzel_rips_2.png")
-plot_fun(RipsFilt, 0.8)
+plot_fun(RipsFilt, 1.04)
 dev.off()
 ```
 
 ```{r}
 png(file = "img/pretzel_rips_3.png")
-plot_fun(RipsFilt, 1.2)
+plot_fun(RipsFilt, 1.3)
 dev.off()
 ```
 
@@ -112,7 +112,7 @@ dev.off()
 
 ```{r}
 png(file = "img/pretzel_rips_5.png")
-plot_fun(RipsFilt, 2.25)
+plot_fun(RipsFilt, 2.4)
 dev.off()
 ```
 
@@ -123,10 +123,29 @@ pretzel_hom <- calculate_homology(pretzel)
 ```{r}
 pretzel_hom[pretzel_hom[, "dimension"] == 1, ]
 ```
+```{r}
+p <- ggplot2::ggplot(data = data.frame(pretzel_hom[pretzel_hom[, "dimension"] == 1, ])) +
+    ggplot2::xlim(0, 2.5) +
+    ggplot2::ylim(0, 2.5) +
+    ggplot2::geom_abline(slope = 1, intercept = 0) +
+    ggplot2::xlab("Birth") +
+    ggplot2::ylab("Death") +
+    ggplot2::theme(axis.line = ggplot2::element_line(colour = "black"),
+                   panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank(),
+                   panel.background = ggplot2::element_blank()) +
+    ggplot2::geom_point(ggplot2::aes_string(x = "birth",
+                                            y = "death"), shape = 17, colour = "#00BFC4", size=3.5) +
+    ggplot2::coord_fixed(ratio = 1) 
+    #ggtitle("") +
+    #theme(plot.title = element_text(color = "black", hjust = title_hjust, vjust = title_vjust, size=title_size))
+
+  p
+```
 
 ```{r}
 png(file = "img/pretzel_dg.png")
-plot_persist(pretzel_hom[pretzel_hom[, "dimension"] == 1, ], )
+#plot_persist(pretzel_hom[pretzel_hom[, "dimension"] == 1, ], )
+p
 dev.off()
 ```
 

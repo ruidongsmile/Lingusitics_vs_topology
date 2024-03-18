@@ -71,7 +71,10 @@ quech_2 <- which(gb_data$glottocode %in% c("ayac1239", "cusc1236", "nort2980", "
 my_perm_test(quech_1, quech_2)
 ```
 
-
+```{r}
+# The total permutation test of Quechuan
+my_perm_test(quech_1, quech_2, power_p = Inf)
+```
 
 
 

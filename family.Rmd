@@ -80,8 +80,8 @@ pd_list <- langs_idx |>
 
 family_pd <- ggarrange(plotlist = pd_list,
           ncol = 3,
-          nrow = 3,
-          labels = langs_label,
+          nrow = 2,
+         # labels = langs_label,
           vjust = 6.9,
           hjust = -0.35,
           font.label = list(size = 10,
